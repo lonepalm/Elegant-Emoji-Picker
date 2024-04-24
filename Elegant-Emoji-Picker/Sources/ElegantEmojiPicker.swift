@@ -79,6 +79,7 @@ open class ElegantEmojiPicker: UIViewController {
             self.modalPresentationStyle = .formSheet
             if #available(iOS 15.0, *) {
                 self.sheetPresentationController?.prefersGrabberVisible = true
+                self.sheetPresentationController?.preferredCornerRadius = 30
                 self.sheetPresentationController?.detents = [.medium(), .large()]
             }
         }
