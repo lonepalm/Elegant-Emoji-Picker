@@ -65,7 +65,10 @@ class ViewController: UIViewController {
         config.showReset = false
         config.showClose = false
         config.supportsPreview = false
-        let picker = ElegantEmojiPicker(delegate: self, configuration: config, sourceView: emojiSelectionButton)
+        var localization = ElegantLocalization()
+        localization.emojiCategoryTitles[.SmileysAndEmotion] = "Smileys"
+        localization.emojiCategoryTitles[.PeopleAndBody] = "People"
+        let picker = ElegantEmojiPicker(delegate: self, configuration: config, localization: localization, sourceView: emojiSelectionButton)
         self.present(picker, animated: true)
     }
 }
