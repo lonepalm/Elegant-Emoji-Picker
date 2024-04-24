@@ -64,6 +64,7 @@ class ViewController: UIViewController {
         config.showRandom = false
         config.showReset = false
         config.showClose = false
+        config.supportsPreview = false
         let picker = ElegantEmojiPicker(delegate: self, configuration: config, sourceView: emojiSelectionButton)
         self.present(picker, animated: true)
     }
