@@ -12,7 +12,6 @@ class SectionsToolbar: UIView {
     required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
     
     weak var emojiPicker: ElegantEmojiPicker?
-    let padding = 8.0
     
     let blur = UIVisualEffectView(effect: UIBlurEffect(style: .systemChromeMaterial))
     let selectionBlur = UIVisualEffectView(effect: UIBlurEffect(style: .systemUltraThinMaterial))
@@ -25,19 +24,20 @@ class SectionsToolbar: UIView {
         self.emojiPicker = emojiPicker
         super.init(frame: .zero)
         
-        self.heightAnchor.constraint(lessThanOrEqualToConstant: 50).isActive = true
-        
-        self.PopupShadow()
-        layer.shadowOpacity = 0.15
-        
-        blur.clipsToBounds = true
         self.addSubview(blur, anchors: LayoutAnchor.fullFrame)
+        blur.layer.shadowColor = UIColor.black.cgColor
+        blur.layer.shadowOpacity = 0.15
+        blur.layer.shadowOffset = .zero
+        blur.layer.shadowRadius = 2
         
+        let horizontalEdgePadding = 14.0
+        let selectionDimension = 36.0
         selectionBlur.clipsToBounds = true
         selectionBlur.backgroundColor = .label.withAlphaComponent(0.2)
-        self.addSubview(selectionBlur, anchors: [.centerY(0)])
+        selectionBlur.layer.cornerRadius = selectionDimension / 2.0
+        self.addSubview(selectionBlur, anchors: [.top((Self.contentHeight - selectionDimension) / 2.0), .width(selectionDimension), .height(selectionDimension)])
         
-        selectionConstraint = selectionBlur.leadingAnchor.constraint(equalTo: self.leadingAnchor)
+        selectionConstraint = selectionBlur.centerXAnchor.constraint(equalTo: self.leadingAnchor)
         selectionConstraint?.isActive = true
         
         for i in 0..<sections.count {
@@ -45,25 +45,20 @@ class SectionsToolbar: UIView {
             
             let prevButton: UIView? = categoryButtons.last
             
-            self.addSubview(button, anchors: [.top(padding), .bottom(padding)])
+            self.addSubview(button, anchors: [.top(0), .height(Self.contentHeight)])
             categoryButtons.append(button)
 
-            button.leadingAnchor.constraint(equalTo: prevButton?.trailingAnchor ?? self.leadingAnchor, constant: prevButton != nil ? 0 : padding).isActive = true
+            button.leadingAnchor.constraint(equalTo: prevButton?.trailingAnchor ?? self.leadingAnchor, constant: prevButton != nil ? 0 : horizontalEdgePadding).isActive = true
             if let prevButton = prevButton { button.widthAnchor.constraint(equalTo: prevButton.widthAnchor).isActive = true }
         }
         
         if let lastButton = self.subviews.last {
-            lastButton.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -padding).isActive = true
-            
-            selectionBlur.widthAnchor.constraint(equalTo: lastButton.widthAnchor).isActive = true
-            selectionBlur.heightAnchor.constraint(equalTo: lastButton.heightAnchor).isActive = true
+            lastButton.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -horizontalEdgePadding).isActive = true
         }
     }
     
     override func layoutSubviews() {
         super.layoutSubviews()
-        blur.layer.cornerRadius = blur.frame.height*0.5
-        selectionBlur.layer.cornerRadius = selectionBlur.frame.height*0.5
         
         UpdateCorrectSelection(animated: false)
     }
@@ -73,8 +68,8 @@ class SectionsToolbar: UIView {
 
         if !emojiPicker.isSearching { self.alpha = emojiPicker.config.categories.count <= 1 ? 0 : 1 }
         
-        let posX: CGFloat? = categoryButtons.indices.contains(emojiPicker.focusedSection) ? categoryButtons[emojiPicker.focusedSection].frame.origin.x : nil
-        let safePos: CGFloat = posX ?? padding
+        let posX: CGFloat? = categoryButtons.indices.contains(emojiPicker.focusedSection) ? categoryButtons[emojiPicker.focusedSection].center.x : nil
+        let safePos: CGFloat = posX ?? categoryButtons.first?.center.x ?? 0
         
         if animated {
             selectionConstraint?.constant = safePos
@@ -100,10 +95,8 @@ class SectionsToolbar: UIView {
             self.emojiPicker = emojiPicker
             super.init(frame: .zero)
             
-            self.heightAnchor.constraint(equalTo: self.widthAnchor).isActive = true
-            
             imageView.image = icon
-            imageView.contentMode = .scaleAspectFit
+            imageView.contentMode = .center
             imageView.tintColor = .label.withAlphaComponent(0.5)
             self.addSubview(imageView, anchors: LayoutAnchor.fullFrame(8))
             
@@ -115,4 +108,6 @@ class SectionsToolbar: UIView {
             emojiPicker.didSelectSection(section)
         }
     }
+    
+    static let contentHeight = 50.0
 }

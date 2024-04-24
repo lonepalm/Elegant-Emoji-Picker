@@ -40,6 +40,7 @@ open class ElegantEmojiPicker: UIViewController {
     
     var toolbar: SectionsToolbar?
     var toolbarBottomConstraint: NSLayoutConstraint?
+    var toolbarHeightConstraint: NSLayoutConstraint?
     
     var skinToneSelector: SkinToneSelector?
     var emojiPreview: EmojiPreview?
@@ -176,7 +177,8 @@ open class ElegantEmojiPicker: UIViewController {
         collectionView.backgroundColor = .clear
         collectionView.delegate = self
         collectionView.dataSource = self
-        collectionView.contentInset.bottom = 50 + padding // Compensating for the toolbar
+        collectionView.contentInset.bottom = SectionsToolbar.contentHeight + padding
+        collectionView.scrollIndicatorInsets.bottom = SectionsToolbar.contentHeight
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         collectionView!.register(EmojiCell.self, forCellWithReuseIdentifier: "EmojiCell")
         collectionView!.register(CollectionViewSectionHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "SectionHeader")
@@ -192,19 +194,18 @@ open class ElegantEmojiPicker: UIViewController {
     
     func AddToolbar () {
         toolbar = SectionsToolbar(sections: emojiSections, emojiPicker: self)
-        self.view.addSubview(toolbar!, anchors: [.centerX(0)])
-        
-        toolbar!.leadingAnchor.constraint(greaterThanOrEqualTo: self.view.safeAreaLayoutGuide.leadingAnchor, constant: padding).isActive = true
-        toolbar!.trailingAnchor.constraint(lessThanOrEqualTo: self.view.safeAreaLayoutGuide.trailingAnchor, constant: -padding).isActive = true
-        
-        toolbarBottomConstraint = toolbar!.bottomAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.bottomAnchor, constant: -padding)
+        self.view.addSubview(toolbar!, anchors: [.leading(0), .trailing(0)])
+        toolbarBottomConstraint = toolbar!.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+        toolbarHeightConstraint = toolbar!.heightAnchor.constraint(equalToConstant: view.safeAreaInsets.bottom + SectionsToolbar.contentHeight)
         toolbarBottomConstraint?.isActive = true
+        toolbarHeightConstraint?.isActive = true
     }
     
     public override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         collectionLayout.headerReferenceSize = CGSize(width: collectionView.frame.width, height: 44)
         fadeContainer.layer.mask?.frame = fadeContainer.bounds
+        toolbarHeightConstraint?.constant = view.safeAreaInsets.bottom + SectionsToolbar.contentHeight
     }
     
     public override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
@@ -245,7 +246,7 @@ extension ElegantEmojiPicker {
     }
     
     func HideBuiltInToolbar () {
-        toolbarBottomConstraint?.constant = 50
+        toolbarBottomConstraint?.constant = 84
         UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 0.7, initialSpringVelocity: 0.4) {
             self.toolbar?.alpha = 0
             self.view.layoutIfNeeded()
@@ -253,7 +254,7 @@ extension ElegantEmojiPicker {
     }
     
     func ShowBuiltInToolbar () {
-        toolbarBottomConstraint?.constant = -padding
+        toolbarBottomConstraint?.constant = 0
         UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 0.7, initialSpringVelocity: 0.4) {
             self.toolbar?.alpha = 1
             self.view.layoutIfNeeded()
