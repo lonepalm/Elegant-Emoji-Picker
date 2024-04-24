@@ -14,7 +14,7 @@ class SectionsToolbar: UIView {
     weak var emojiPicker: ElegantEmojiPicker?
     let padding = 8.0
     
-    let blur = UIVisualEffectView(effect: UIBlurEffect(style: .systemUltraThinMaterial))
+    let blur = UIVisualEffectView(effect: UIBlurEffect(style: .systemChromeMaterial))
     let selectionBlur = UIVisualEffectView(effect: UIBlurEffect(style: .systemUltraThinMaterial))
     
     var selectionConstraint: NSLayoutConstraint?
@@ -28,12 +28,13 @@ class SectionsToolbar: UIView {
         self.heightAnchor.constraint(lessThanOrEqualToConstant: 50).isActive = true
         
         self.PopupShadow()
+        layer.shadowOpacity = 0.15
         
         blur.clipsToBounds = true
         self.addSubview(blur, anchors: LayoutAnchor.fullFrame)
         
         selectionBlur.clipsToBounds = true
-        selectionBlur.backgroundColor = .label.withAlphaComponent(0.3)
+        selectionBlur.backgroundColor = .label.withAlphaComponent(0.2)
         self.addSubview(selectionBlur, anchors: [.centerY(0)])
         
         selectionConstraint = selectionBlur.leadingAnchor.constraint(equalTo: self.leadingAnchor)
@@ -103,7 +104,7 @@ class SectionsToolbar: UIView {
             
             imageView.image = icon
             imageView.contentMode = .scaleAspectFit
-            imageView.tintColor = .systemGray
+            imageView.tintColor = .label.withAlphaComponent(0.5)
             self.addSubview(imageView, anchors: LayoutAnchor.fullFrame(8))
             
             self.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(Tap)))
