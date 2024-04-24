@@ -16,14 +16,13 @@ open class ElegantEmojiPicker: UIViewController {
     public let config: ElegantConfiguration
     public let localization: ElegantLocalization
     
-    let padding = 16.0
-    let topElementHeight = 40.0
-    
-    let backgroundBlur = UIVisualEffectView(effect: UIBlurEffect(style: .systemUltraThinMaterial))
+    let padding = 20.0
+    let topElementHeight = 48.0
     
     var searchFieldBackground: UIVisualEffectView?
     var searchField: UITextField?
     var clearButton: UIButton?
+    var searchIconImageView: UIImageView?
     var randomButton: UIButton?
     var resetButton: UIButton?
     var closeButton: UIButton?
@@ -31,9 +30,9 @@ open class ElegantEmojiPicker: UIViewController {
     let fadeContainer = UIView()
     let collectionLayout: UICollectionViewFlowLayout = {
         let layout = UICollectionViewFlowLayout()
-        layout.minimumLineSpacing = 10
-        layout.minimumInteritemSpacing = 10
-        layout.sectionInset = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
+        layout.minimumLineSpacing = 18
+        layout.minimumInteritemSpacing = 18
+        layout.sectionInset = UIEdgeInsets(top: 10, left: 26, bottom: 10, right: 26)
         layout.itemSize = CGSize(width: 40.0, height: 40.0)
         return layout
     }()
@@ -86,20 +85,22 @@ open class ElegantEmojiPicker: UIViewController {
         
         self.presentationController?.delegate = self
         
-        self.view.addSubview(backgroundBlur, anchors: LayoutAnchor.fullFrame)
+        view.backgroundColor = .systemBackground
         
         if config.showSearch {
             searchFieldBackground = UIVisualEffectView(effect: UIBlurEffect(style: .systemUltraThinMaterial))
-            searchFieldBackground!.layer.cornerRadius = 8
+            searchFieldBackground!.layer.cornerRadius = 16
             searchFieldBackground!.clipsToBounds = true
             searchFieldBackground!.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(TappedSearchBackground)))
-            self.view.addSubview(searchFieldBackground!, anchors: [.safeAreaLeading(padding), .safeAreaTop(padding*1.5), .height(topElementHeight)])
+            self.view.addSubview(searchFieldBackground!, anchors: [.safeAreaLeading(padding), .safeAreaTop(padding), .height(topElementHeight)])
             
             let spacing = 10.0
             
+            let tintColor = UIColor.label.withAlphaComponent(0.3)
+            
             clearButton = UIButton()
             clearButton!.setImage(UIImage(systemName: "xmark.circle.fill"), for: .normal)
-            clearButton!.tintColor = .systemGray
+            clearButton!.tintColor = tintColor
             clearButton!.alpha = 0
             clearButton!.contentMode = .scaleAspectFit
             clearButton!.setContentHuggingPriority(.required, for: .horizontal)
@@ -107,11 +108,19 @@ open class ElegantEmojiPicker: UIViewController {
             clearButton!.addTarget(self, action: #selector(ClearButtonTap), for: .touchUpInside)
             searchFieldBackground?.contentView.addSubview(clearButton!, anchors: [.trailing(spacing), .top(spacing), .bottom(spacing)])
             
+            searchIconImageView = UIImageView(image: UIImage(systemName: "magnifyingglass", withConfiguration: UIImage.SymbolConfiguration(pointSize: 17, weight: .medium)))
+            searchIconImageView!.contentMode = .center
+            searchIconImageView!.tintColor = tintColor
+            searchIconImageView!.setContentHuggingPriority(.required, for: .horizontal)
+            searchIconImageView!.setContentCompressionResistancePriority(.required, for: .horizontal)
+            searchFieldBackground!.contentView.addSubview(searchIconImageView!, anchors: [.leading(16), .top(spacing), .bottom(spacing)])
+            
             searchField = UITextField()
-            searchField!.placeholder = localization.searchFieldPlaceholder
+            searchField!.font = .systemFont(ofSize: 17)
+            searchField!.attributedPlaceholder = NSAttributedString(string: localization.searchFieldPlaceholder, attributes: [.foregroundColor: tintColor])
             searchField!.delegate = self
             searchField!.addTarget(self, action: #selector(searchFieldChanged), for: .editingChanged)
-            searchFieldBackground!.contentView.addSubview(searchField!, anchors: [.leading(spacing), .top(spacing), .bottom(spacing), .trailingToLeading(clearButton!, spacing)])
+            searchFieldBackground!.contentView.addSubview(searchField!, anchors: [.leadingToTrailing(searchIconImageView!, spacing), .top(spacing), .bottom(spacing), .trailingToLeading(clearButton!, spacing)])
         }
         
         if config.showRandom {
@@ -123,7 +132,7 @@ open class ElegantEmojiPicker: UIViewController {
             randomButton!.contentHorizontalAlignment = .trailing
             randomButton!.setContentHuggingPriority(.required, for: .horizontal)
             randomButton!.setContentCompressionResistancePriority(.required, for: .horizontal)
-            self.view.addSubview(randomButton!, anchors: [.safeAreaTop(padding*1.5), .height(topElementHeight)])
+            self.view.addSubview(randomButton!, anchors: [.safeAreaTop(padding), .height(topElementHeight)])
             randomButton?.leadingAnchor.constraint(equalTo: searchFieldBackground?.trailingAnchor ?? self.view.safeAreaLayoutGuide.leadingAnchor, constant: padding).isActive = true
         }
         
@@ -135,7 +144,7 @@ open class ElegantEmojiPicker: UIViewController {
             resetButton?.contentHorizontalAlignment = .trailing
             resetButton?.setContentHuggingPriority(.required, for: .horizontal)
             resetButton?.setContentCompressionResistancePriority(.required, for: .horizontal)
-            self.view.addSubview(resetButton!, anchors: [.safeAreaTop(padding*1.5), .height(topElementHeight)])
+            self.view.addSubview(resetButton!, anchors: [.safeAreaTop(padding), .height(topElementHeight)])
             resetButton?.leadingAnchor.constraint(equalTo: randomButton?.trailingAnchor ?? searchFieldBackground?.trailingAnchor ?? self.view.safeAreaLayoutGuide.leadingAnchor, constant: padding).isActive = true
         }
         
@@ -146,7 +155,7 @@ open class ElegantEmojiPicker: UIViewController {
             closeButton!.setContentHuggingPriority(.required, for: .horizontal)
             closeButton!.contentHorizontalAlignment = .trailing
             closeButton!.setContentCompressionResistancePriority(.required, for: .horizontal)
-            self.view.addSubview(closeButton!, anchors: [.safeAreaTop(padding*1.5), .height(topElementHeight)])
+            self.view.addSubview(closeButton!, anchors: [.safeAreaTop(padding), .height(topElementHeight)])
             closeButton?.leadingAnchor.constraint(equalTo: resetButton?.trailingAnchor ?? randomButton?.trailingAnchor ?? searchFieldBackground?.trailingAnchor ?? self.view.safeAreaLayoutGuide.leadingAnchor, constant: padding).isActive = true
         }
         
@@ -193,12 +202,12 @@ open class ElegantEmojiPicker: UIViewController {
     
     public override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        collectionLayout.headerReferenceSize = CGSize(width: collectionView.frame.width, height: 50)
+        collectionLayout.headerReferenceSize = CGSize(width: collectionView.frame.width, height: 44)
         fadeContainer.layer.mask?.frame = fadeContainer.bounds
     }
     
     public override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-        self.view.backgroundColor = UIScreen.main.traitCollection.userInterfaceStyle == .light ? .black.withAlphaComponent(0.1) : .clear
+        self.view.backgroundColor = .systemBackground
     }
     
     @objc func TappedClose () {

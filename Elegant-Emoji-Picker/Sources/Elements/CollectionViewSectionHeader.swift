@@ -11,8 +11,6 @@ import UIKit
 class CollectionViewSectionHeader: UICollectionReusableView {
     let label = UILabel()
     
-    let padding = 16.0
-    
     override init(frame: CGRect) {
         super.init(frame: frame)
         self.InitLabel()
@@ -26,6 +24,6 @@ class CollectionViewSectionHeader: UICollectionReusableView {
     func InitLabel() {
         label.font = .preferredFont(forTextStyle: .headline)
         label.textColor = .label
-        self.addSubview(label, anchors: [.leading(padding), .trailing(padding), .top(padding), .bottom(0)])
+        self.addSubview(label, anchors: [.leading(29), .trailing(16), .bottom(0)])
     }
 }
