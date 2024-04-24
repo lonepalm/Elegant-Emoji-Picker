@@ -113,7 +113,7 @@
 			);
 			mainGroup = 371336F929BBF51C00952B29;
 			packageReferences = (
-				943E5A192BD9859B00CB18B6 /* XCLocalSwiftPackageReference "../Elegant-Emoji-Picker" */,
+				943E5A192BD9859B00CB18B6 /* XCLocalSwiftPackageReference "../" */,
 			);
 			productRefGroup = 3713370329BBF51C00952B29 /* Products */;
 			projectDirPath = "";
@@ -355,9 +355,9 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
-		943E5A192BD9859B00CB18B6 /* XCLocalSwiftPackageReference "../Elegant-Emoji-Picker" */ = {
+		943E5A192BD9859B00CB18B6 /* XCLocalSwiftPackageReference "../" */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = "../Elegant-Emoji-Picker";
+			relativePath = ../;
 		};
 /* End XCLocalSwiftPackageReference section */
 
