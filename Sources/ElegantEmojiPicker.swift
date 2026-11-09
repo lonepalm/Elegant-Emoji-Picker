@@ -527,7 +527,7 @@ extension ElegantEmojiPicker {
     /// Returns an array of all available emojis. Use this method to retrieve emojis for your own collection.
     /// - Returns: Array of all emojis.
     static public func getAllEmoji () -> [Emoji] {
-        guard let url = Bundle.module.url(forResource: "Emoji Unicode 15.0", withExtension: "json.br"),
+        guard let url = Bundle.module.url(forResource: "Emoji Unicode 17.0", withExtension: "json.br"),
               let compressedEmojiData = try? Data(contentsOf: url),
               let brotliAlgorithm = NSData.CompressionAlgorithm(rawValue: NSData.CompressionAlgorithm.zlib.rawValue + 1),
               let emojiData = try? (compressedEmojiData as NSData).decompressed(using: brotliAlgorithm) as Data, // Brotli decompress https://tijo.link/WEQjXF
