@@ -31,6 +31,7 @@ Elegant Emoji Picker is a configurable, simple to use, even more simple to impem
 - Blindingly beautiful
 
 #### Limitations
+- Skin tones are disabled for 👯, 👯‍♂️, 👯‍♀️, 🤼, 🤼‍♂️, and 🤼‍♀️ in the bundled dataset. Their toned variants were added in Unicode 17, but their base emoji have older iOS minimum versions. Keep these `skin_tones` flags disabled when refreshing the dataset until variant availability is gated separately; the base emoji remain available.
 - Does not support two skin tones per emoji. For example:
   - [x] Supported: 🤝🏻  🤝🏿 
   - [ ] Not supported: 🫱🏿‍🫲🏻   🫱🏼‍🫲🏿 
